@@ -1,0 +1,2994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>LandGov AI — SIH 26019</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+ --bg:#07111f;
+ --panel:#0d1b2e;
+ --panel2:#10243b;
+ --border:#203a56;
+ --text:#edf6ff;
+ --muted:#8ea7bf;
+ --primary:#38bdf8;
+ --secondary:#22c55e;
+ --warning:#f59e0b;
+ --danger:#ef4444;
+ --purple:#a78bfa;
+ --sidebar:270px;
+}
+
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+}
+
+body{
+ font-family:Inter,Arial,sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
+}
+
+button,input,select,textarea{
+ font-family:inherit;
+}
+
+button{
+ cursor:pointer;
+ border:0;
+}
+
+.app{
+ display:flex;
+ min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+ width:var(--sidebar);
+ background:#081522;
+ border-right:1px solid var(--border);
+ position:fixed;
+ left:0;
+ top:0;
+ bottom:0;
+ z-index:100;
+ overflow-y:auto;
+}
+
+.logo{
+ padding:24px 20px;
+ border-bottom:1px solid var(--border);
+}
+
+.logo-title{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ font-size:20px;
+ font-weight:800;
+}
+
+.logo-icon{
+ width:42px;
+ height:42px;
+ border-radius:12px;
+ background:linear-gradient(135deg,#0284c7,#22c55e);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:22px;
+}
+
+.logo small{
+ display:block;
+ color:var(--muted);
+ margin-top:7px;
+ margin-left:54px;
+}
+
+.nav{
+ padding:18px 12px;
+}
+
+.nav-label{
+ font-size:11px;
+ color:#58718a;
+ text-transform:uppercase;
+ letter-spacing:1.5px;
+ padding:12px 12px 8px;
+}
+
+.nav-item{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:12px 14px;
+ margin:3px 0;
+ color:#91a9c0;
+ border-radius:10px;
+ transition:.2s;
+ font-size:14px;
+ cursor:pointer;
+}
+
+.nav-item:hover{
+ background:#10243b;
+ color:white;
+}
+
+.nav-item.active{
+ background:linear-gradient(90deg,#123a59,#0d2942);
+ color:#55c7f5;
+ border-left:3px solid var(--primary);
+}
+
+.nav-icon{
+ width:23px;
+ text-align:center;
+ font-size:17px;
+}
+
+.user-box{
+ position:absolute;
+ left:12px;
+ right:12px;
+ bottom:15px;
+ padding:12px;
+ background:#0d1c2c;
+ border:1px solid var(--border);
+ border-radius:12px;
+}
+
+.user{
+ display:flex;
+ gap:10px;
+ align-items:center;
+}
+
+.avatar{
+ width:38px;
+ height:38px;
+ border-radius:50%;
+ background:linear-gradient(135deg,#38bdf8,#6366f1);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-weight:700;
+}
+
+.user-name{
+ font-size:13px;
+ font-weight:600;
+}
+
+.user-role{
+ font-size:11px;
+ color:var(--muted);
+ margin-top:2px;
+}
+
+/* MAIN */
+
+.main{
+ margin-left:var(--sidebar);
+ width:calc(100% - var(--sidebar));
+}
+
+.topbar{
+ height:72px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:0 30px;
+ border-bottom:1px solid var(--border);
+ background:rgba(7,17,31,.9);
+ position:sticky;
+ top:0;
+ z-index:50;
+ backdrop-filter:blur(12px);
+}
+
+.search{
+ width:390px;
+ position:relative;
+}
+
+.search input{
+ width:100%;
+ background:#0d1d30;
+ border:1px solid var(--border);
+ border-radius:10px;
+ padding:11px 16px 11px 40px;
+ color:white;
+ outline:none;
+}
+
+.search span{
+ position:absolute;
+ left:14px;
+ top:10px;
+ color:#69829a;
+}
+
+.top-actions{
+ display:flex;
+ gap:10px;
+ align-items:center;
+}
+
+.icon-btn{
+ width:39px;
+ height:39px;
+ border-radius:9px;
+ background:#0d1d30;
+ color:#b7cbe0;
+ border:1px solid var(--border);
+ cursor:pointer;
+}
+
+.page{
+ padding:28px;
+ display:none;
+}
+
+.page.active{
+ display:block;
+}
+
+.page-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-start;
+ margin-bottom:25px;
+}
+
+.page-title{
+ font-size:28px;
+ font-weight:800;
+}
+
+.page-subtitle{
+ color:var(--muted);
+ margin-top:7px;
+ font-size:14px;
+}
+
+.btn{
+ padding:10px 15px;
+ border-radius:9px;
+ color:white;
+ background:#17334e;
+ border:1px solid #2a4d6b;
+ cursor:pointer;
+}
+
+.btn-primary{
+ background:linear-gradient(135deg,#0284c7,#0ea5e9);
+ border:0;
+}
+
+.btn-green{
+ background:linear-gradient(135deg,#15803d,#22c55e);
+ border:0;
+}
+
+/* CARDS */
+
+.grid{
+ display:grid;
+ gap:18px;
+}
+
+.stats{
+ grid-template-columns:repeat(4,1fr);
+}
+
+.card{
+ background:var(--panel);
+ border:1px solid var(--border);
+ border-radius:14px;
+ padding:20px;
+}
+
+.stat{
+ display:flex;
+ justify-content:space-between;
+}
+
+.stat-icon{
+ width:44px;
+ height:44px;
+ border-radius:10px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:#102b44;
+ font-size:20px;
+}
+
+.stat-number{
+ font-size:27px;
+ font-weight:800;
+ margin-top:8px;
+}
+
+.stat-label{
+ font-size:12px;
+ color:var(--muted);
+}
+
+.stat-change{
+ font-size:11px;
+ color:#4ade80;
+ margin-top:7px;
+}
+
+.dashboard-grid{
+ grid-template-columns:2fr 1fr;
+ margin-top:18px;
+}
+
+.chart-title{
+ font-weight:700;
+ margin-bottom:15px;
+}
+
+.chart-container{
+ height:280px;
+ position:relative;
+}
+
+.section-title{
+ font-size:18px;
+ font-weight:700;
+ margin:28px 0 15px;
+}
+
+/* TABLE */
+
+.table-wrap{
+ overflow:auto;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+}
+
+th{
+ text-align:left;
+ color:#7893ac;
+ font-size:11px;
+ text-transform:uppercase;
+ padding:13px;
+ border-bottom:1px solid var(--border);
+}
+
+td{
+ padding:14px 13px;
+ border-bottom:1px solid #172d43;
+ font-size:13px;
+}
+
+.badge{
+ display:inline-flex;
+ padding:5px 9px;
+ border-radius:20px;
+ font-size:10px;
+ font-weight:600;
+}
+
+.badge-green{
+ color:#4ade80;
+ background:#0d3420;
+}
+
+.badge-blue{
+ color:#60cfff;
+ background:#0c3046;
+}
+
+.badge-orange{
+ color:#fbbf24;
+ background:#3c2b0b;
+}
+
+.badge-purple{
+ color:#c4b5fd;
+ background:#292047;
+}
+
+/* RESEARCH */
+
+.search-large{
+ display:flex;
+ gap:10px;
+ margin-bottom:20px;
+}
+
+.search-large input{
+ flex:1;
+ background:#0c1b2d;
+ border:1px solid var(--border);
+ color:white;
+ padding:13px 16px;
+ border-radius:10px;
+ outline:none;
+}
+
+.research-grid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:17px;
+}
+
+.research-card{
+ min-height:220px;
+ display:flex;
+ flex-direction:column;
+}
+
+.doc-type{
+ color:#4dc5f5;
+ font-size:11px;
+ font-weight:700;
+ text-transform:uppercase;
+}
+
+.research-card h3{
+ font-size:16px;
+ margin:10px 0;
+ line-height:1.4;
+}
+
+.research-card p{
+ color:var(--muted);
+ font-size:12px;
+ line-height:1.6;
+}
+
+.card-bottom{
+ margin-top:auto;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding-top:18px;
+}
+
+.source{
+ font-size:11px;
+ color:#718ba3;
+}
+
+/* AI */
+
+.ai-layout{
+ display:grid;
+ grid-template-columns:1fr 310px;
+ gap:18px;
+}
+
+.chat{
+ height:560px;
+ display:flex;
+ flex-direction:column;
+}
+
+.messages{
+ flex:1;
+ overflow-y:auto;
+ padding:5px;
+}
+
+.message{
+ display:flex;
+ margin:13px 0;
+}
+
+.message.user{
+ justify-content:flex-end;
+}
+
+.bubble{
+ max-width:78%;
+ padding:13px 15px;
+ border-radius:13px;
+ background:#10263e;
+ color:#d8e8f5;
+ font-size:13px;
+ line-height:1.6;
+}
+
+.message.user .bubble{
+ background:#075985;
+}
+
+.chat-input{
+ display:flex;
+ gap:8px;
+ border-top:1px solid var(--border);
+ padding-top:15px;
+}
+
+.chat-input input{
+ flex:1;
+ background:#091a2b;
+ border:1px solid var(--border);
+ border-radius:9px;
+ color:white;
+ padding:12px;
+ outline:none;
+}
+
+.ai-tools button{
+ width:100%;
+ text-align:left;
+ margin-bottom:8px;
+ padding:12px;
+ background:#0c1d2f;
+ color:#c5d8e9;
+ border:1px solid var(--border);
+ border-radius:9px;
+ cursor:pointer;
+}
+
+.ai-tools button:hover{
+ border-color:#2d769c;
+}
+
+/* GIS */
+
+.map{
+ height:540px;
+ border-radius:14px;
+ position:relative;
+ overflow:hidden;
+ border:1px solid var(--border);
+ background:
+ radial-gradient(circle at 25% 30%,rgba(34,197,94,.35),transparent 22%),
+ radial-gradient(circle at 70% 45%,rgba(56,189,248,.3),transparent 20%),
+ radial-gradient(circle at 50% 80%,rgba(167,139,250,.28),transparent 25%),
+ linear-gradient(135deg,#0b2937,#122d28 40%,#102b3b);
+}
+
+.map::before{
+ content:"";
+ position:absolute;
+ inset:0;
+ opacity:.2;
+ background-image:
+ linear-gradient(#ffffff 1px,transparent 1px),
+ linear-gradient(90deg,#ffffff 1px,transparent 1px);
+ background-size:50px 50px;
+}
+
+.map-title{
+ position:absolute;
+ top:16px;
+ left:16px;
+ background:#071522dd;
+ border:1px solid #34516a;
+ padding:12px;
+ border-radius:9px;
+ z-index:2;
+}
+
+.map-title strong{
+ display:block;
+ font-size:13px;
+}
+
+.map-title span{
+ color:#819bb1;
+ font-size:11px;
+}
+
+.map-controls{
+ position:absolute;
+ top:16px;
+ right:16px;
+ z-index:2;
+ display:flex;
+ flex-direction:column;
+ gap:7px;
+}
+
+.map-controls button{
+ width:38px;
+ height:38px;
+ background:#071522dd;
+ color:white;
+ border:1px solid #34516a;
+ border-radius:8px;
+ cursor:pointer;
+}
+
+.region{
+ position:absolute;
+ border-radius:50%;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.region:hover{
+ transform:scale(1.12);
+}
+
+.r1{
+ width:80px;
+ height:80px;
+ left:22%;
+ top:31%;
+ background:#22c55e66;
+ border:2px solid #22c55e;
+}
+
+.r2{
+ width:105px;
+ height:105px;
+ left:51%;
+ top:22%;
+ background:#38bdf855;
+ border:2px solid #38bdf8;
+}
+
+.r3{
+ width:75px;
+ height:75px;
+ left:67%;
+ top:57%;
+ background:#f59e0b55;
+ border:2px solid #f59e0b;
+}
+
+.r4{
+ width:65px;
+ height:65px;
+ left:36%;
+ top:66%;
+ background:#a78bfa55;
+ border:2px solid #a78bfa;
+}
+
+.map-legend{
+ position:absolute;
+ bottom:15px;
+ left:15px;
+ background:#071522ee;
+ border:1px solid #34516a;
+ border-radius:9px;
+ padding:12px;
+ font-size:11px;
+ z-index:2;
+}
+
+.legend-row{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ margin:5px 0;
+}
+
+.dot{
+ width:9px;
+ height:9px;
+ border-radius:50%;
+}
+
+/* SIMULATOR */
+
+.sim-grid{
+ display:grid;
+ grid-template-columns:340px 1fr;
+ gap:18px;
+}
+
+.control{
+ margin:18px 0;
+}
+
+.control label{
+ display:flex;
+ justify-content:space-between;
+ font-size:12px;
+ color:#9db2c6;
+ margin-bottom:8px;
+}
+
+.control input[type=range]{
+ width:100%;
+}
+
+.output-grid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:13px;
+}
+
+.output{
+ padding:16px;
+ background:#0b1d2e;
+ border:1px solid var(--border);
+ border-radius:10px;
+}
+
+.output span{
+ color:#829bb1;
+ font-size:11px;
+}
+
+.output strong{
+ display:block;
+ font-size:23px;
+ margin-top:7px;
+}
+
+/* PROJECT */
+
+.project-grid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:17px;
+}
+
+.project h3{
+ margin:10px 0;
+ font-size:16px;
+}
+
+.project p{
+ font-size:12px;
+ color:var(--muted);
+ line-height:1.5;
+}
+
+/* MODAL */
+
+.modal{
+ position:fixed;
+ inset:0;
+ background:#0009;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ z-index:500;
+ padding:20px;
+}
+
+.modal.show{
+ display:flex;
+}
+
+.modal-box{
+ width:min(650px,100%);
+ background:#0b1b2d;
+ border:1px solid var(--border);
+ border-radius:15px;
+ padding:25px;
+ max-height:90vh;
+ overflow:auto;
+}
+
+.modal-head{
+ display:flex;
+ justify-content:space-between;
+ margin-bottom:20px;
+}
+
+.close{
+ background:none;
+ color:#91a9c0;
+ font-size:23px;
+ cursor:pointer;
+}
+
+.form-group{
+ margin-bottom:15px;
+}
+
+.form-group label{
+ display:block;
+ color:#9db2c6;
+ font-size:12px;
+ margin-bottom:7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+ width:100%;
+ background:#081727;
+ border:1px solid var(--border);
+ border-radius:8px;
+ color:white;
+ padding:11px;
+ outline:none;
+}
+
+.form-group textarea{
+ min-height:100px;
+ resize:vertical;
+}
+
+/* NOTIFICATION */
+
+.toast{
+ position:fixed;
+ right:25px;
+ bottom:25px;
+ background:#102d45;
+ border:1px solid #2c6385;
+ color:white;
+ padding:14px 18px;
+ border-radius:10px;
+ transform:translateY(100px);
+ opacity:0;
+ transition:.3s;
+ z-index:900;
+ font-size:13px;
+}
+
+.toast.show{
+ transform:translateY(0);
+ opacity:1;
+}
+
+/* RESPONSIVE */
+
+.mobile-menu{
+ display:none;
+}
+
+@media(max-width:1100px){
+ .stats{
+  grid-template-columns:repeat(2,1fr);
+ }
+ .research-grid,
+ .project-grid{
+  grid-template-columns:repeat(2,1fr);
+ }
+ .dashboard-grid,
+ .ai-layout,
+ .sim-grid{
+  grid-template-columns:1fr;
+ }
+}
+
+@media(max-width:800px){
+
+ .sidebar{
+  transform:translateX(-100%);
+  transition:.25s;
+ }
+
+ .sidebar.open{
+  transform:translateX(0);
+ }
+
+ .main{
+  margin-left:0;
+  width:100%;
+ }
+
+ .mobile-menu{
+  display:block;
+ }
+
+ .topbar{
+  padding:0 15px;
+ }
+
+ .search{
+  display:none;
+ }
+
+ .page{
+  padding:18px;
+ }
+
+ .stats{
+  grid-template-columns:1fr;
+ }
+
+ .research-grid,
+ .project-grid,
+ .output-grid{
+  grid-template-columns:1fr;
+ }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+ <div class="logo">
+  <div class="logo-title">
+   <div class="logo-icon">🌐</div>
+   <div>LandGov AI</div>
+  </div>
+  <small>SIH-26019 • DoLR</small>
+ </div>
+
+ <nav class="nav">
+
+  <div class="nav-label">Platform</div>
+
+  <div class="nav-item active" data-page="dashboard">
+   <span class="nav-icon">▦</span>
+   Dashboard
+  </div>
+
+  <div class="nav-item" data-page="research">
+   <span class="nav-icon">📚</span>
+   Research Hub
+  </div>
+
+  <div class="nav-item" data-page="ai">
+   <span class="nav-icon">🤖</span>
+   AI Research Assistant
+  </div>
+
+  <div class="nav-item" data-page="gis">
+   <span class="nav-icon">🗺️</span>
+   GIS Intelligence
+  </div>
+
+  <div class="nav-item" data-page="simulator">
+   <span class="nav-icon">🧪</span>
+   Policy Innovation Lab
+  </div>
+
+  <div class="nav-label">Collaboration</div>
+
+  <div class="nav-item" data-page="projects">
+   <span class="nav-icon">👥</span>
+   Collaboration
+  </div>
+
+  <div class="nav-item" data-page="innovation">
+   <span class="nav-icon">💡</span>
+   Innovation Portal
+  </div>
+
+  <div class="nav-label">Intelligence</div>
+
+  <div class="nav-item" data-page="analytics">
+   <span class="nav-icon">📊</span>
+   Analytics
+  </div>
+
+  <div class="nav-item" data-page="datasets">
+   <span class="nav-icon">🗄️</span>
+   Data Repository
+  </div>
+
+  <div class="nav-label">System</div>
+
+  <div class="nav-item" data-page="security">
+   <span class="nav-icon">🔐</span>
+   Security & Access
+  </div>
+
+ </nav>
+
+ <div class="user-box">
+  <div class="user">
+   <div class="avatar">YS</div>
+   <div>
+    <div class="user-name">Research User</div>
+    <div class="user-role">Researcher • Verified</div>
+   </div>
+  </div>
+ </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+ <header class="topbar">
+
+  <button class="icon-btn mobile-menu" id="mobileMenu">☰</button>
+
+  <div class="search">
+   <span>⌕</span>
+   <input id="globalSearch" placeholder="Search research, policies, datasets...">
+  </div>
+
+  <div class="top-actions">
+   <button class="icon-btn" onclick="showToast('No new critical alerts')">🔔</button>
+   <button class="icon-btn" onclick="openModal('profileModal')">👤</button>
+  </div>
+
+ </header>
+
+
+<!-- DASHBOARD -->
+
+<section class="page active" id="dashboard">
+
+ <div class="page-head">
+  <div>
+   <div class="page-title">National Land Intelligence</div>
+   <div class="page-subtitle">
+    Evidence-based research and policy innovation platform
+   </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="openModal('reportModal')">
+   + Generate Report
+  </button>
+ </div>
+
+
+ <div class="grid stats">
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">Research Resources</div>
+    <div class="stat-number">12,684</div>
+    <div class="stat-change">↑ 8.4% this month</div>
+   </div>
+   <div class="stat-icon">📚</div>
+  </div>
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">Land Datasets</div>
+    <div class="stat-number">486</div>
+    <div class="stat-change">↑ 24 new datasets</div>
+   </div>
+   <div class="stat-icon">🗄️</div>
+  </div>
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">Policy Experiments</div>
+    <div class="stat-number">327</div>
+    <div class="stat-change">↑ 31 this quarter</div>
+   </div>
+   <div class="stat-icon">🧪</div>
+  </div>
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">Active Researchers</div>
+    <div class="stat-number">2,418</div>
+    <div class="stat-change">↑ 12.7% growth</div>
+   </div>
+   <div class="stat-icon">👥</div>
+  </div>
+
+ </div>
+
+
+ <div class="grid dashboard-grid">
+
+  <div class="card">
+
+   <div class="chart-title">
+    Land Use Trend Analysis
+   </div>
+
+   <div class="chart-container">
+    <canvas id="landChart"></canvas>
+   </div>
+
+  </div>
+
+
+  <div class="card">
+
+   <div class="chart-title">
+    Policy Research Distribution
+   </div>
+
+   <div class="chart-container">
+    <canvas id="researchChart"></canvas>
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="section-title">
+  Latest Research & Policy Evidence
+ </div>
+
+ <div class="card table-wrap">
+
+  <table>
+
+   <thead>
+    <tr>
+     <th>Resource</th>
+     <th>Type</th>
+     <th>Domain</th>
+     <th>Year</th>
+     <th>Status</th>
+    </tr>
+   </thead>
+
+   <tbody>
+
+    <tr>
+     <td>Digital Land Governance Framework</td>
+     <td>Policy Paper</td>
+     <td>Land Administration</td>
+     <td>2026</td>
+     <td><span class="badge badge-green">Verified</span></td>
+    </tr>
+
+    <tr>
+     <td>Climate Vulnerability of Agricultural Land</td>
+     <td>Research</td>
+     <td>Climate</td>
+     <td>2025</td>
+     <td><span class="badge badge-blue">Indexed</span></td>
+    </tr>
+
+    <tr>
+     <td>Urban-Rural Land Transition Dataset</td>
+     <td>Dataset</td>
+     <td>Urbanization</td>
+     <td>2026</td>
+     <td><span class="badge badge-green">Verified</span></td>
+    </tr>
+
+    <tr>
+     <td>Land Dispute Resolution Study</td>
+     <td>Case Study</td>
+     <td>Dispute Resolution</td>
+     <td>2025</td>
+     <td><span class="badge badge-purple">Reviewed</span></td>
+    </tr>
+
+   </tbody>
+
+  </table>
+
+ </div>
+
+</section>
+
+
+<!-- RESEARCH HUB -->
+
+<section class="page" id="research">
+
+ <div class="page-head">
+  <div>
+   <div class="page-title">Research Hub</div>
+   <div class="page-subtitle">
+    Discover research papers, policies, legal documents and case studies
+   </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="openModal('uploadModal')">
+   + Add Resource
+  </button>
+ </div>
+
+ <div class="search-large">
+  <input id="researchSearch" placeholder="Search by topic, policy, author, dataset or keyword...">
+  <button class="btn btn-primary" onclick="searchResearch()">Search</button>
+ </div>
+
+ <div class="research-grid" id="researchResults">
+
+  <div class="card research-card">
+   <span class="doc-type">Research Paper</span>
+   <h3>Digital Transformation in Indian Land Administration</h3>
+   <p>
+    Analysis of digital land records, cadastral modernization,
+    transparency and institutional adoption.
+   </p>
+
+   <div class="card-bottom">
+    <span class="source">DoLR Research Repository</span>
+    <span class="badge badge-green">Verified</span>
+   </div>
+  </div>
+
+
+  <div class="card research-card">
+   <span class="doc-type">Policy Document</span>
+   <h3>National Framework for Sustainable Land Use</h3>
+   <p>
+    Policy framework addressing agricultural productivity,
+    environmental sustainability and urban expansion.
+   </p>
+
+   <div class="card-bottom">
+    <span class="source">Government Policy</span>
+    <span class="badge badge-blue">2026</span>
+   </div>
+  </div>
+
+
+  <div class="card research-card">
+   <span class="doc-type">Dataset</span>
+   <h3>District Land Use Classification</h3>
+   <p>
+    Multi-category land-use indicators supporting GIS analytics
+    and policy evaluation.
+   </p>
+
+   <div class="card-bottom">
+    <span class="source">Geospatial Database</span>
+    <span class="badge badge-green">Open</span>
+   </div>
+  </div>
+
+
+  <div class="card research-card">
+   <span class="doc-type">Case Study</span>
+   <h3>Land Dispute Resolution Through Digital Records</h3>
+   <p>
+    Case study exploring digital records and workflow-based
+    approaches to dispute reduction.
+   </p>
+
+   <div class="card-bottom">
+    <span class="source">Research Institution</span>
+    <span class="badge badge-purple">Reviewed</span>
+   </div>
+  </div>
+
+
+  <div class="card research-card">
+   <span class="doc-type">Research Paper</span>
+   <h3>Climate Resilience and Agricultural Land</h3>
+   <p>
+    Assessment of climate exposure, agricultural vulnerability
+    and adaptation strategies.
+   </p>
+
+   <div class="card-bottom">
+    <span class="source">Climate Research</span>
+    <span class="badge badge-green">Verified</span>
+   </div>
+  </div>
+
+
+  <div class="card research-card">
+   <span class="doc-type">Policy Analysis</span>
+   <h3>Urban Expansion and Rural Land Transition</h3>
+   <p>
+    Analysis of land conversion pressures around rapidly growing
+    urban regions.
+   </p>
+
+   <div class="card-bottom">
+    <span class="source">Policy Lab</span>
+    <span class="badge badge-orange">Analysis</span>
+   </div>
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- AI ASSISTANT -->
+
+<section class="page" id="ai">
+
+ <div class="page-head">
+  <div>
+   <div class="page-title">AI Research Assistant</div>
+   <div class="page-subtitle">
+    Ask questions and discover evidence from the platform
+   </div>
+  </div>
+ </div>
+
+ <div class="ai-layout">
+
+  <div class="card chat">
+
+   <div class="messages" id="messages">
+
+    <div class="message">
+     <div class="bubble">
+      👋 Hello! I am <strong>LandGov AI</strong>.<br><br>
+      I can help you explore land-governance research,
+      policy evidence, GIS insights and scenario analysis.
+      <br><br>
+      Try asking:
+      <br>
+      • What are major land-use trends?
+      <br>
+      • Show climate-risk evidence.
+      <br>
+      • Analyze urban expansion.
+      <br>
+      • Compare policy scenarios.
+     </div>
+    </div>
+
+   </div>
+
+   <div class="chat-input">
+    <input id="aiInput" placeholder="Ask a research question..." onkeydown="if(event.key==='Enter')askAI()">
+    <button class="btn btn-primary" onclick="askAI()">Ask</button>
+   </div>
+
+  </div>
+
+
+  <div class="card ai-tools">
+
+   <h3 style="margin-bottom:14px">AI Research Tools</h3>
+
+   <button onclick="aiPrompt('Summarize current land-use trends in India')">
+    📈 Trend Analysis
+   </button>
+
+   <button onclick="aiPrompt('Find evidence about climate vulnerability of agricultural land')">
+    🌦 Climate Analysis
+   </button>
+
+   <button onclick="aiPrompt('Analyze urban-rural land transition')">
+    🏙 Urban Transition
+   </button>
+
+   <button onclick="aiPrompt('Generate a literature review on digital land governance')">
+    📚 Literature Synthesis
+   </button>
+
+   <button onclick="aiPrompt('Compare land policy scenarios')">
+    🧪 Scenario Analysis
+   </button>
+
+   <button onclick="aiPrompt('Recommend relevant datasets for land governance research')">
+    🗄 Dataset Recommendation
+   </button>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- GIS -->
+
+<section class="page" id="gis">
+
+ <div class="page-head">
+  <div>
+   <div class="page-title">GIS Land Intelligence</div>
+   <div class="page-subtitle">
+    Interactive visualization of land-use and policy indicators
+   </div>
+  </div>
+ </div>
+
+ <div class="card" style="margin-bottom:18px">
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+
+   <button class="btn" onclick="toggleLayer('land')">
+    🌾 Land Use
+   </button>
+
+   <button class="btn" onclick="toggleLayer('climate')">
+    🌦 Climate Vulnerability
+   </button>
+
+   <button class="btn" onclick="toggleLayer('infra')">
+    🏗 Infrastructure
+   </button>
+
+   <button class="btn" onclick="toggleLayer('policy')">
+    📜 Policy Impact
+   </button>
+
+  </div>
+
+ </div>
+
+ <div class="map" id="map">
+
+  <div class="map-title">
+   <strong>India Land Governance Map</strong>
+   <span>Demonstration geospatial layer</span>
+  </div>
+
+  <div class="map-controls">
+   <button onclick="showToast('Map zoomed in')">+</button>
+   <button onclick="showToast('Map zoomed out')">−</button>
+   <button onclick="showToast('Location reset')">⌖</button>
+  </div>
+
+  <div class="region r1" onclick="mapRegion('Northern Agricultural Zone')"></div>
+  <div class="region r2" onclick="mapRegion('Central Land Zone')"></div>
+  <div class="region r3" onclick="mapRegion('Eastern Transition Zone')"></div>
+  <div class="region r4" onclick="mapRegion('Southern Urban Zone')"></div>
+
+  <div class="map-legend">
+
+   <strong>Layers</strong>
+
+   <div class="legend-row">
+    <span class="dot" style="background:#22c55e"></span>
+    Agricultural
+   </div>
+
+   <div class="legend-row">
+    <span class="dot" style="background:#38bdf8"></span>
+    Mixed Land Use
+   </div>
+
+   <div class="legend-row">
+    <span class="dot" style="background:#f59e0b"></span>
+    Transition Risk
+   </div>
+
+   <div class="legend-row">
+    <span class="dot" style="background:#a78bfa"></span>
+    Urban Expansion
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- POLICY SIMULATOR -->
+
+<section class="page" id="simulator">
+
+ <div class="page-head">
+
+  <div>
+   <div class="page-title">Policy Innovation Lab</div>
+   <div class="page-subtitle">
+    Explore scenario-based policy impact modelling
+   </div>
+  </div>
+
+  <button class="btn btn-green" onclick="runSimulation()">
+   ▶ Run Simulation
+  </button>
+
+ </div>
+
+
+ <div class="sim-grid">
+
+  <div class="card">
+
+   <h3>Policy Parameters</h3>
+
+   <div class="control">
+
+    <label>
+     Agricultural Land Protection
+     <span id="protectionValue">60%</span>
+    </label>
+
+    <input type="range"
+     min="0"
+     max="100"
+     value="60"
+     id="protection"
+     oninput="updateSimulator()">
+
+   </div>
+
+
+   <div class="control">
+
+    <label>
+     Urban Expansion Control
+     <span id="urbanValue">40%</span>
+    </label>
+
+    <input type="range"
+     min="0"
+     max="100"
+     value="40"
+     id="urban"
+     oninput="updateSimulator()">
+
+   </div>
+
+
+   <div class="control">
+
+    <label>
+     Climate Adaptation Investment
+     <span id="climateValue">50%</span>
+    </label>
+
+    <input type="range"
+     min="0"
+     max="100"
+     value="50"
+     id="climate"
+     oninput="updateSimulator()">
+
+   </div>
+
+
+   <div class="control">
+
+    <label>
+     Digital Land Records Adoption
+     <span id="digitalValue">70%</span>
+    </label>
+
+    <input type="range"
+     min="0"
+     max="100"
+     value="70"
+     id="digital"
+     oninput="updateSimulator()">
+
+   </div>
+
+  </div>
+
+
+  <div>
+
+   <div class="grid output-grid">
+
+    <div class="output">
+     <span>Land Sustainability</span>
+     <strong id="sustainability">72</strong>
+    </div>
+
+    <div class="output">
+     <span>Climate Resilience</span>
+     <strong id="resilience">68</strong>
+    </div>
+
+    <div class="output">
+     <span>Governance Index</span>
+     <strong id="governance">79</strong>
+    </div>
+
+    <div class="output">
+     <span>Urban Pressure</span>
+     <strong id="pressure">42</strong>
+    </div>
+
+    <div class="output">
+     <span>Dispute Risk</span>
+     <strong id="dispute">28</strong>
+    </div>
+
+    <div class="output">
+     <span>Evidence Confidence</span>
+     <strong id="confidence">84%</strong>
+    </div>
+
+   </div>
+
+
+   <div class="card" style="margin-top:18px">
+
+    <div class="chart-title">
+     Scenario Impact
+    </div>
+
+    <div class="chart-container">
+     <canvas id="simulationChart"></canvas>
+    </div>
+
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- COLLABORATION -->
+
+<section class="page" id="projects">
+
+ <div class="page-head">
+
+  <div>
+   <div class="page-title">Research Collaboration</div>
+   <div class="page-subtitle">
+    Collaborative workspaces for multidisciplinary land research
+   </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="openModal('projectModal')">
+   + New Project
+  </button>
+
+ </div>
+
+
+ <div class="project-grid">
+
+  <div class="card project">
+
+   <span class="badge badge-blue">ACTIVE</span>
+
+   <h3>Climate Resilient Land Planning</h3>
+
+   <p>
+    Multi-institution research project examining climate
+    vulnerability and adaptation strategies.
+   </p>
+
+   <div style="margin-top:20px;color:#7f98af;font-size:11px">
+    8 researchers • 14 datasets • 63% complete
+   </div>
+
+  </div>
+
+
+  <div class="card project">
+
+   <span class="badge badge-green">ACTIVE</span>
+
+   <h3>Digital Land Records Research</h3>
+
+   <p>
+    Research collaboration focused on digitization,
+    interoperability and evidence-based governance.
+   </p>
+
+   <div style="margin-top:20px;color:#7f98af;font-size:11px">
+    12 researchers • 22 resources • 48% complete
+   </div>
+
+  </div>
+
+
+  <div class="card project">
+
+   <span class="badge badge-purple">REVIEW</span>
+
+   <h3>Urban Expansion Policy Lab</h3>
+
+   <p>
+    Scenario-based research on urban-rural land transition
+    and infrastructure planning.
+   </p>
+
+   <div style="margin-top:20px;color:#7f98af;font-size:11px">
+    5 researchers • 8 scenarios • Under review
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- INNOVATION -->
+
+<section class="page" id="innovation">
+
+ <div class="page-head">
+
+  <div>
+   <div class="page-title">Innovation Portal</div>
+   <div class="page-subtitle">
+    Research grants, pilots, hackathons and knowledge competitions
+   </div>
+
+  </div>
+
+  <button class="btn btn-primary" onclick="openModal('ideaModal')">
+   Submit Innovation
+  </button>
+
+ </div>
+
+
+ <div class="research-grid">
+
+  <div class="card research-card">
+
+   <span class="doc-type">RESEARCH GRANT</span>
+
+   <h3>AI for Land Dispute Prevention</h3>
+
+   <p>
+    Funding opportunity for AI-enabled approaches to
+    identify dispute risk and improve resolution workflows.
+   </p>
+
+   <div class="card-bottom">
+    <span class="badge badge-green">Open</span>
+    <button class="btn" onclick="showToast('Application workspace opened')">
+     Apply
+    </button>
+   </div>
+
+  </div>
+
+
+  <div class="card research-card">
+
+   <span class="doc-type">HACKATHON</span>
+
+   <h3>GeoAI Land Innovation Challenge</h3>
+
+   <p>
+    Develop geospatial and AI solutions for land governance
+    and sustainable land management.
+   </p>
+
+   <div class="card-bottom">
+    <span class="badge badge-blue">Upcoming</span>
+    <button class="btn" onclick="showToast('Challenge details opened')">
+     Explore
+    </button>
+   </div>
+
+  </div>
+
+
+  <div class="card research-card">
+
+   <span class="doc-type">PILOT PROJECT</span>
+
+   <h3>Digital Village Land Intelligence</h3>
+
+   <p>
+    Pilot implementation of integrated land, demographic and
+    geospatial analytics at local level.
+   </p>
+
+   <div class="card-bottom">
+    <span class="badge badge-purple">Evaluation</span>
+    <button class="btn" onclick="showToast('Pilot details opened')">
+     View
+    </button>
+   </div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- ANALYTICS -->
+
+<section class="page" id="analytics">
+
+ <div class="page-head">
+
+  <div>
+   <div class="page-title">Land Governance Analytics</div>
+   <div class="page-subtitle">
+    Evidence indicators and decision-support metrics
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="grid dashboard-grid">
+
+  <div class="card">
+
+   <div class="chart-title">Land Governance Performance</div>
+
+   <div class="chart-container">
+    <canvas id="performanceChart"></canvas>
+   </div>
+
+  </div>
+
+
+  <div class="card">
+
+   <div class="chart-title">Climate Resilience</div>
+
+   <div class="chart-container">
+    <canvas id="climateChart"></canvas>
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="section-title">
+  Key Indicators
+ </div>
+
+
+ <div class="grid stats">
+
+  <div class="card stat">
+
+   <div>
+    <div class="stat-label">Digital Records Coverage</div>
+    <div class="stat-number">86%</div>
+    <div class="stat-change">↑ 5.2%</div>
+   </div>
+
+   <div class="stat-icon">💾</div>
+
+  </div>
+
+
+  <div class="card stat">
+
+   <div>
+    <div class="stat-label">Climate Resilience</div>
+    <div class="stat-number">71</div>
+    <div class="stat-change">↑ 4.8 points</div>
+   </div>
+
+   <div class="stat-icon">🌱</div>
+
+  </div>
+
+
+  <div class="card stat">
+
+   <div>
+    <div class="stat-label">Policy Evidence Score</div>
+    <div class="stat-number">82</div>
+    <div class="stat-change">↑ 6.1 points</div>
+   </div>
+
+   <div class="stat-icon">📑</div>
+
+  </div>
+
+
+  <div class="card stat">
+
+   <div>
+    <div class="stat-label">Research Collaboration</div>
+    <div class="stat-number">93%</div>
+    <div class="stat-change">↑ 11.4%</div>
+   </div>
+
+   <div class="stat-icon">🤝</div>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- DATASETS -->
+
+<section class="page" id="datasets">
+
+ <div class="page-head">
+
+  <div>
+   <div class="page-title">Data Repository</div>
+   <div class="page-subtitle">
+    Integrated land, socio-economic, satellite and geospatial datasets
+   </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="openModal('uploadModal')">
+   + Upload Dataset
+  </button>
+
+ </div>
+
+
+ <div class="card table-wrap">
+
+  <table>
+
+   <thead>
+    <tr>
+     <th>Dataset</th>
+     <th>Category</th>
+     <th>Coverage</th>
+     <th>Format</th>
+     <th>Access</th>
+     <th>Action</th>
+    </tr>
+   </thead>
+
+   <tbody>
+
+    <tr>
+     <td>District Land Use Classification</td>
+     <td>Land Use</td>
+     <td>National</td>
+     <td>GeoJSON</td>
+     <td><span class="badge badge-green">Open</span></td>
+     <td><button class="btn" onclick="showToast('Dataset preview opened')">View</button></td>
+    </tr>
+
+    <tr>
+     <td>Climate Vulnerability Index</td>
+     <td>Climate</td>
+     <td>State</td>
+     <td>CSV</td>
+     <td><span class="badge badge-blue">Research</span></td>
+     <td><button class="btn" onclick="showToast('Dataset preview opened')">View</button></td>
+    </tr>
+
+    <tr>
+     <td>Satellite Land Cover</td>
+     <td>Remote Sensing</td>
+     <td>National</td>
+     <td>Raster</td>
+     <td><span class="badge badge-green">Open</span></td>
+     <td><button class="btn" onclick="showToast('Dataset preview opened')">View</button></td>
+    </tr>
+
+    <tr>
+     <td>Land Dispute Indicators</td>
+     <td>Governance</td>
+     <td>District</td>
+     <td>CSV</td>
+     <td><span class="badge badge-purple">Restricted</span></td>
+     <td><button class="btn" onclick="showToast('Access request submitted')">Request</button></td>
+    </tr>
+
+   </tbody>
+
+  </table>
+
+ </div>
+
+</section>
+
+
+<!-- SECURITY -->
+
+<section class="page" id="security">
+
+ <div class="page-head">
+
+  <div>
+   <div class="page-title">Security & Access</div>
+   <div class="page-subtitle">
+    Role-based access and platform security
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="grid stats">
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">Verified Users</div>
+    <div class="stat-number">8,412</div>
+   </div>
+   <div class="stat-icon">👤</div>
+  </div>
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">Institutions</div>
+    <div class="stat-number">284</div>
+   </div>
+   <div class="stat-icon">🏛️</div>
+  </div>
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">API Requests</div>
+    <div class="stat-number">1.8M</div>
+   </div>
+   <div class="stat-icon">🔌</div>
+  </div>
+
+  <div class="card stat">
+   <div>
+    <div class="stat-label">Security Status</div>
+    <div class="stat-number" style="font-size:20px;color:#4ade80">
+     SECURE
+    </div>
+   </div>
+   <div class="stat-icon">🔐</div>
+  </div>
+
+ </div>
+
+
+ <div class="section-title">
+  Role Permissions
+ </div>
+
+
+ <div class="card table-wrap">
+
+  <table>
+
+   <thead>
+    <tr>
+     <th>Role</th>
+     <th>Research</th>
+     <th>Datasets</th>
+     <th>Policy Lab</th>
+     <th>Administration</th>
+    </tr>
+   </thead>
+
+   <tbody>
+
+    <tr>
+     <td>Public User</td>
+     <td>View</td>
+     <td>Open Data</td>
+     <td>Demo</td>
+     <td>—</td>
+    </tr>
+
+    <tr>
+     <td>Researcher</td>
+     <td>Full</td>
+     <td>Research Access</td>
+     <td>Full</td>
+     <td>—</td>
+    </tr>
+
+    <tr>
+     <td>Government Official</td>
+     <td>Full</td>
+     <td>Government Data</td>
+     <td>Full</td>
+     <td>Limited</td>
+    </tr>
+
+    <tr>
+     <td>Administrator</td>
+     <td>Full</td>
+     <td>Full</td>
+     <td>Full</td>
+     <td>Full</td>
+    </tr>
+
+   </tbody>
+
+  </table>
+
+ </div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<!-- MODALS -->
+
+<div class="modal" id="reportModal">
+
+ <div class="modal-box">
+
+  <div class="modal-head">
+   <h2>Generate Evidence Report</h2>
+   <button class="close" onclick="closeModal('reportModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Report Topic</label>
+   <input id="reportTopic" placeholder="e.g. Urban land transition">
+  </div>
+
+  <div class="form-group">
+   <label>Analysis Type</label>
+   <select>
+    <option>Evidence Review</option>
+    <option>Policy Impact Analysis</option>
+    <option>GIS Analysis</option>
+    <option>Scenario Analysis</option>
+   </select>
+  </div>
+
+  <button class="btn btn-primary" onclick="generateReport()">
+   Generate Report
+  </button>
+
+ </div>
+
+</div>
+
+
+<div class="modal" id="uploadModal">
+
+ <div class="modal-box">
+
+  <div class="modal-head">
+   <h2>Add Research Resource</h2>
+   <button class="close" onclick="closeModal('uploadModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Resource Name</label>
+   <input placeholder="Enter resource name">
+  </div>
+
+  <div class="form-group">
+   <label>Resource Type</label>
+   <select>
+    <option>Research Paper</option>
+    <option>Policy Document</option>
+    <option>Dataset</option>
+    <option>Case Study</option>
+    <option>Legal Document</option>
+   </select>
+  </div>
+
+  <div class="form-group">
+   <label>Description</label>
+   <textarea placeholder="Describe the resource..."></textarea>
+  </div>
+
+  <button class="btn btn-primary"
+   onclick="closeModal('uploadModal');showToast('Resource submitted for verification')">
+   Submit Resource
+  </button>
+
+ </div>
+
+</div>
+
+
+<div class="modal" id="projectModal">
+
+ <div class="modal-box">
+
+  <div class="modal-head">
+   <h2>Create Research Project</h2>
+   <button class="close" onclick="closeModal('projectModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Project Name</label>
+   <input placeholder="Enter project name">
+  </div>
+
+  <div class="form-group">
+   <label>Research Domain</label>
+   <select>
+    <option>Land Administration</option>
+    <option>Climate Resilience</option>
+    <option>Urbanization</option>
+    <option>Land Disputes</option>
+    <option>Geospatial Governance</option>
+   </select>
+  </div>
+
+  <div class="form-group">
+   <label>Project Description</label>
+   <textarea></textarea>
+  </div>
+
+  <button class="btn btn-primary"
+   onclick="closeModal('projectModal');showToast('Research project created')">
+   Create Project
+  </button>
+
+ </div>
+
+</div>
+
+
+<div class="modal" id="ideaModal">
+
+ <div class="modal-box">
+
+  <div class="modal-head">
+   <h2>Submit Innovation</h2>
+   <button class="close" onclick="closeModal('ideaModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Innovation Title</label>
+   <input placeholder="Enter title">
+  </div>
+
+  <div class="form-group">
+   <label>Innovation Type</label>
+   <select>
+    <option>Research Proposal</option>
+    <option>Hackathon Idea</option>
+    <option>Pilot Project</option>
+    <option>Policy Innovation</option>
+   </select>
+  </div>
+
+  <div class="form-group">
+   <label>Proposal</label>
+   <textarea></textarea>
+  </div>
+
+  <button class="btn btn-green"
+   onclick="closeModal('ideaModal');showToast('Innovation submitted successfully')">
+   Submit
+  </button>
+
+ </div>
+
+</div>
+
+
+<div class="modal" id="profileModal">
+
+ <div class="modal-box">
+
+  <div class="modal-head">
+   <h2>User Profile</h2>
+   <button class="close" onclick="closeModal('profileModal')">×</button>
+  </div>
+
+  <div style="text-align:center;padding:20px">
+
+   <div class="avatar" style="margin:auto;width:70px;height:70px;font-size:24px">
+    YS
+   </div>
+
+   <h3 style="margin-top:15px">
+    Research User
+   </h3>
+
+   <p style="color:#829bb1;font-size:12px;margin-top:5px">
+    Verified Researcher
+   </p>
+
+   <div style="margin-top:20px;text-align:left">
+
+    <div class="card">
+     <div style="font-size:12px;color:#839bb0">
+      Access Level
+     </div>
+     <strong>Research + Policy Lab</strong>
+    </div>
+
+   </div>
+
+  </div>
+
+ </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* NAVIGATION */
+
+const navItems=document.querySelectorAll(".nav-item");
+const pages=document.querySelectorAll(".page");
+
+navItems.forEach(item=>{
+
+ item.addEventListener("click",()=>{
+
+  const page=item.dataset.page;
+
+  navItems.forEach(n=>n.classList.remove("active"));
+  item.classList.add("active");
+
+  pages.forEach(p=>p.classList.remove("active"));
+
+  const target=document.getElementById(page);
+
+  if(target){
+   target.classList.add("active");
+  }
+
+  document.getElementById("sidebar").classList.remove("open");
+
+  window.scrollTo({
+   top:0,
+   behavior:"smooth"
+  });
+
+ });
+
+});
+
+
+/* MOBILE MENU */
+
+document.getElementById("mobileMenu").addEventListener("click",()=>{
+
+ document.getElementById("sidebar").classList.toggle("open");
+
+});
+
+
+/* MODALS */
+
+function openModal(id){
+ document.getElementById(id).classList.add("show");
+}
+
+function closeModal(id){
+ document.getElementById(id).classList.remove("show");
+}
+
+
+/* TOAST */
+
+function showToast(message){
+
+ const toast=document.getElementById("toast");
+
+ toast.textContent=message;
+
+ toast.classList.add("show");
+
+ setTimeout(()=>{
+  toast.classList.remove("show");
+ },2500);
+
+}
+
+
+/* GLOBAL SEARCH */
+
+document.getElementById("globalSearch").addEventListener("keydown",function(e){
+
+ if(e.key==="Enter"){
+
+  const query=this.value.trim();
+
+  if(!query)return;
+
+  navItems.forEach(n=>n.classList.remove("active"));
+  pages.forEach(p=>p.classList.remove("active"));
+
+  document.querySelector('[data-page="research"]').classList.add("active");
+  document.getElementById("research").classList.add("active");
+
+  document.getElementById("researchSearch").value=query;
+
+  searchResearch();
+
+ }
+
+});
+
+
+/* RESEARCH SEARCH */
+
+function searchResearch(){
+
+ const query=document
+  .getElementById("researchSearch")
+  .value
+  .toLowerCase()
+  .trim();
+
+ const cards=document.querySelectorAll("#researchResults .research-card");
+
+ let count=0;
+
+ cards.forEach(card=>{
+
+  const text=card.innerText.toLowerCase();
+
+  if(!query || text.includes(query)){
+
+   card.style.display="flex";
+   count++;
+
+  }else{
+
+   card.style.display="none";
+
+  }
+
+ });
+
+ showToast(
+  query
+   ? `${count} relevant resources found`
+   : "Showing all research resources"
+ );
+
+}
+
+
+/* AI ASSISTANT */
+
+function aiPrompt(text){
+
+ document.getElementById("aiInput").value=text;
+
+ askAI();
+
+}
+
+
+function addMessage(text,type="ai"){
+
+ const messages=document.getElementById("messages");
+
+ const message=document.createElement("div");
+
+ message.className="message "+(type==="user"?"user":"");
+
+ message.innerHTML=
+ `<div class="bubble">${text}</div>`;
+
+ messages.appendChild(message);
+
+ messages.scrollTop=messages.scrollHeight;
+
+}
+
+
+function askAI(){
+
+ const input=document.getElementById("aiInput");
+
+ const question=input.value.trim();
+
+ if(!question)return;
+
+ addMessage(question,"user");
+
+ input.value="";
+
+ setTimeout(()=>{
+
+  const q=question.toLowerCase();
+
+  let response="";
+
+  if(q.includes("climate")){
+
+   response=
+   `<strong>Climate Evidence Analysis</strong><br><br>
+   The platform can combine climate vulnerability indicators,
+   land-use data, remote-sensing layers and socio-economic
+   variables to identify areas requiring resilience interventions.
+   <br><br>
+   <strong>Suggested evidence:</strong>
+   climate exposure → land sensitivity → adaptive capacity →
+   intervention scenarios.`;
+
+  }else if(q.includes("urban") || q.includes("expansion")){
+
+   response=
+   `<strong>Urban-Rural Transition Analysis</strong><br><br>
+   Urban expansion can be studied using land-cover change,
+   infrastructure proximity, population growth and conversion
+   indicators.
+   <br><br>
+   <strong>Recommended analysis:</strong>
+   compare historical land-use layers with infrastructure
+   and demographic indicators.`;
+
+  }else if(q.includes("dataset")){
+
+   response=
+   `<strong>Recommended Dataset Categories</strong><br><br>
+   1. Land-use / land-cover data<br>
+   2. Cadastral and land-record datasets<br>
+   3. Satellite / remote-sensing imagery<br>
+   4. Climate vulnerability indicators<br>
+   5. Socio-economic indicators<br>
+   6. Infrastructure datasets<br>
+   7. Land-dispute indicators`;
+
+  }else if(q.includes("literature") || q.includes("research")){
+
+   response=
+   `<strong>Literature Synthesis</strong><br><br>
+   I would organize the evidence into four themes:
+   <br><br>
+   • Digital land administration<br>
+   • Sustainable land-use planning<br>
+   • Climate-resilient land governance<br>
+   • Geospatial and policy innovation
+   <br><br>
+   Each conclusion should be linked to its underlying
+   source rather than treated as unsupported AI output.`;
+
+  }else if(q.includes("policy") || q.includes("scenario")){
+
+   response=
+   `<strong>Policy Scenario Analysis</strong><br><br>
+   Open the <strong>Policy Innovation Lab</strong> to vary:
+   <br><br>
+   • agricultural protection<br>
+   • urban expansion control<br>
+   • climate investment<br>
+   • digital land-record adoption
+   <br><br>
+   The simulator then produces illustrative governance,
+   sustainability, resilience and dispute-risk indicators.`;
+
+  }else{
+
+   response=
+   `<strong>LandGov AI Research Insight</strong><br><br>
+   Your question can be investigated by combining the
+   platform's research repository, datasets, GIS layers,
+   analytics and policy-simulation tools.
+   <br><br>
+   For a defensible result, the production system should
+   retrieve verified sources and display citations alongside
+   AI-generated synthesis.`;
+
+  }
+
+  addMessage(response,"ai");
+
+ },500);
+
+}
+
+
+/* GIS */
+
+function mapRegion(name){
+
+ addMessage(
+  `<strong>${name}</strong><br><br>
+   Selected geospatial region. In the production platform,
+   this panel would load verified GIS indicators,
+   land-use statistics, climate exposure and policy-impact
+   information for the selected geography.`,
+  "ai"
+ );
+
+ showToast(name+" selected");
+
+}
+
+
+function toggleLayer(layer){
+
+ showToast(
+  layer.charAt(0).toUpperCase()+layer.slice(1)+" GIS layer toggled"
+ );
+
+}
+
+
+/* SIMULATOR */
+
+let simulationChart;
+
+
+function updateSimulator(){
+
+ const protection=Number(document.getElementById("protection").value);
+ const urban=Number(document.getElementById("urban").value);
+ const climate=Number(document.getElementById("climate").value);
+ const digital=Number(document.getElementById("digital").value);
+
+ document.getElementById("protectionValue").textContent=protection+"%";
+ document.getElementById("urbanValue").textContent=urban+"%";
+ document.getElementById("climateValue").textContent=climate+"%";
+ document.getElementById("digitalValue").textContent=digital+"%";
+
+ const sustainability=Math.round(
+  35+
+  protection*.38+
+  climate*.20-
+  urban*.08
+ );
+
+ const resilience=Math.round(
+  25+
+  climate*.55+
+  protection*.15
+ );
+
+ const governance=Math.round(
+  25+
+  digital*.55+
+  protection*.12
+ );
+
+ const pressure=Math.round(
+  85-
+  urban*.45+
+  protection*.12
+ );
+
+ const dispute=Math.round(
+  75-
+  digital*.32-
+  protection*.22
+ );
+
+ document.getElementById("sustainability").textContent=
+  Math.max(0,Math.min(100,sustainability));
+
+ document.getElementById("resilience").textContent=
+  Math.max(0,Math.min(100,resilience));
+
+ document.getElementById("governance").textContent=
+  Math.max(0,Math.min(100,governance));
+
+ document.getElementById("pressure").textContent=
+  Math.max(0,Math.min(100,pressure));
+
+ document.getElementById("dispute").textContent=
+  Math.max(0,Math.min(100,dispute));
+
+ document.getElementById("confidence").textContent=
+  Math.round(70+digital*.2)+"%";
+
+ if(simulationChart){
+
+  simulationChart.data.datasets[0].data=[
+   sustainability,
+   resilience,
+   governance,
+   100-pressure,
+   100-dispute
+  ];
+
+  simulationChart.update();
+
+ }
+
+}
+
+
+function runSimulation(){
+
+ updateSimulator();
+
+ showToast(
+  "Policy scenario simulation completed"
+ );
+
+}
+
+
+/* REPORT */
+
+function generateReport(){
+
+ const topic=
+ document.getElementById("reportTopic").value.trim()
+ || "Land Governance";
+
+ closeModal("reportModal");
+
+ showToast("Evidence report generated for "+topic);
+
+}
+
+
+/* CHARTS */
+
+function createCharts(){
+
+ new Chart(
+  document.getElementById("landChart"),
+  {
+   type:"line",
+
+   data:{
+    labels:["2021","2022","2023","2024","2025","2026"],
+
+    datasets:[
+
+     {
+      label:"Agricultural",
+      data:[68,67,66,65,64,63],
+      borderWidth:2,
+      tension:.4
+     },
+
+     {
+      label:"Urban",
+      data:[19,20,22,23,25,27],
+      borderWidth:2,
+      tension:.4
+     },
+
+     {
+      label:"Forest",
+      data:[13,13,12,12,11,10],
+      borderWidth:2,
+      tension:.4
+     }
+
+    ]
+   },
+
+   options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    plugins:{
+     legend:{
+      labels:{
+       color:"#9db2c6"
+      }
+     }
+    },
+
+    scales:{
+     x:{
+      ticks:{color:"#7893aa"},
+      grid:{color:"#183148"}
+     },
+
+     y:{
+      ticks:{color:"#7893aa"},
+      grid:{color:"#183148"}
+     }
+    }
+
+   }
+
+  }
+ );
+
+
+ new Chart(
+  document.getElementById("researchChart"),
+  {
+   type:"doughnut",
+
+   data:{
+    labels:[
+     "Land Administration",
+     "Climate",
+     "Urbanization",
+     "Disputes",
+     "Geospatial"
+    ],
+
+    datasets:[
+     {
+      data:[30,20,18,12,20],
+      borderWidth:0
+     }
+    ]
+   },
+
+   options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    plugins:{
+     legend:{
+      position:"bottom",
+      labels:{
+       color:"#9db2c6",
+       font:{size:10}
+      }
+     }
+    }
+   }
+
+  }
+ );
+
+
+ simulationChart=new Chart(
+  document.getElementById("simulationChart"),
+  {
+   type:"bar",
+
+   data:{
+    labels:[
+     "Sustainability",
+     "Resilience",
+     "Governance",
+     "Low Pressure",
+     "Low Dispute Risk"
+    ],
+
+    datasets:[
+     {
+      label:"Scenario Score",
+      data:[72,68,79,58,72],
+      borderWidth:0
+     }
+    ]
+   },
+
+   options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    scales:{
+     x:{
+      ticks:{color:"#7893aa"},
+      grid:{display:false}
+     },
+
+     y:{
+      beginAtZero:true,
+      max:100,
+      ticks:{color:"#7893aa"},
+      grid:{color:"#183148"}
+     }
+    },
+
+    plugins:{
+     legend:{
+      display:false
+     }
+    }
+   }
+
+  }
+ );
+
+
+ new Chart(
+  document.getElementById("performanceChart"),
+  {
+   type:"radar",
+
+   data:{
+    labels:[
+     "Digitalization",
+     "Transparency",
+     "Evidence",
+     "Collaboration",
+     "GIS",
+     "Research"
+    ],
+
+    datasets:[
+     {
+      label:"Governance Index",
+      data:[86,76,82,91,84,88],
+      borderWidth:2,
+      pointRadius:3
+     }
+    ]
+   },
+
+   options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    scales:{
+     r:{
+      min:0,
+      max:100,
+      ticks:{
+       color:"#718aa0",
+       backdropColor:"transparent"
+      },
+      grid:{
+       color:"#29445b"
+      },
+      angleLines:{
+       color:"#29445b"
+      },
+      pointLabels:{
+       color:"#9db2c6",
+       font:{size:11}
+      }
+     }
+    },
+
+    plugins:{
+     legend:{
+      labels:{
+       color:"#9db2c6"
+      }
+     }
+    }
+   }
+
+  }
+ );
+
+
+ new Chart(
+  document.getElementById("climateChart"),
+  {
+   type:"bar",
+
+   data:{
+    labels:[
+     "North",
+     "South",
+     "East",
+     "West",
+     "Central"
+    ],
+
+    datasets:[
+     {
+      label:"Resilience Index",
+      data:[74,79,65,71,68],
+      borderWidth:0
+     }
+    ]
+   },
+
+   options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    scales:{
+     x:{
+      ticks:{color:"#7893aa"},
+      grid:{display:false}
+     },
+
+     y:{
+      beginAtZero:true,
+      max:100,
+      ticks:{color:"#7893aa"},
+      grid:{color:"#183148"}
+     }
+    },
+
+    plugins:{
+     legend:{
+      labels:{
+       color:"#9db2c6"
+      }
+     }
+    }
+   }
+
+  }
+ );
+
+}
+
+
+/* INITIALIZE */
+
+window.addEventListener("load",()=>{
+
+ createCharts();
+
+ updateSimulator();
+
+});
+
+</script>
+
+</body>
+</html>
